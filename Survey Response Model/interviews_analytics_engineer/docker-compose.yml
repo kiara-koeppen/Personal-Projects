@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  db:
+    build:
+        context: ./db
+    restart: always
+    environment:
+      - POSTGRES_USER=data
+      - POSTGRES_PASSWORD=data
+      - POSTGRES_DB=data
+    ports:
+      - '5433:5432'
+    networks:
+      - db-test
+
+  jupyter:
+    build:
+        context: ./jupyter
+    ports:
+      - 10000:8888
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: data
+      DB_PASSWORD: data
+      DB_NAME: data
+    links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - db-test
+
+networks:
+  db-test:
+    external: false
+    name: db-test
